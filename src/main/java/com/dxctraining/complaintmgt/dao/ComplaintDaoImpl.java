@@ -5,6 +5,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 //import javax.persistence.TypedQuery;
+import javax.persistence.TypedQuery;
 
 import org.springframework.stereotype.Repository;
 
@@ -26,11 +27,13 @@ public class ComplaintDaoImpl implements ComplaintDao{
 		Complaint complaint=em.find(Complaint.class, id);
 		return complaint;
 	}
-//	public List<Complaint> findAll() {
-//		String q="from Complaint";
-//		TypedQuery<Complaint>query=em.createQuery(q,Complaint.class);
-//		List<Complaint>complaintList=query.getResultList();
-//		return complaintList;
-//	}
+	public List<Complaint> findAll(int consumerid) {
+		String q="from Complaint where consumerid=:consumer";
+		TypedQuery<Complaint>query=em.createQuery(q,Complaint.class);
+		query.setParameter("consumer", consumerid);
+		List<Complaint>complaintList=query.getResultList();
+		return complaintList;
+	}
+
 
 }

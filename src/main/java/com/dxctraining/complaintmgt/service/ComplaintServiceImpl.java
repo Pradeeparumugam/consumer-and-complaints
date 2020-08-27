@@ -2,6 +2,8 @@ package com.dxctraining.complaintmgt.service;
 
 
 
+import java.util.List;
+
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +29,11 @@ public class ComplaintServiceImpl implements ComplaintService{
 		verify(id);
 		Complaint complaint=dao.findById(id);
 		return complaint;
+	}
+	public List<Complaint> findAll(int consumerid){
+		verify(consumerid);
+		List<Complaint> complaints=dao.findAll(consumerid);
+		return complaints;
 	}
 	
 	public void verify(Object ob) {

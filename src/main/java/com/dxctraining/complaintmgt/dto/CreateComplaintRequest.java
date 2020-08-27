@@ -1,15 +1,17 @@
 package com.dxctraining.complaintmgt.dto;
 
 public class CreateComplaintRequest {
-	private  int id;
+	
 	private String desc;
-	public int getId() {
-		return id;
+	private int consumerid;
+	
+	public int getConsumerid() {
+		return consumerid;
 	}
-	public void setId(int id) {
-		this.id = id;
+	public void setConsumerid(int consumerid) {
+		this.consumerid = consumerid;
 	}
-	public String getDesc() {
+		public String getDesc() {
 		return desc;
 	}
 	public void setDesc(String desc) {

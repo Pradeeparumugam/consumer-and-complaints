@@ -1,18 +1,32 @@
 package com.dxctraining.complaintmgt.entities;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 @Entity
 public class Complaint {
 	@Id
+	@GeneratedValue
 	private int id;
 	
 	private String desc;
-	public Complaint(int id,String desc) {
-		this.id=id;
+	
+	private int consumerid;
+	
+	public Complaint(String desc,int consumerid) {
+		
 		this.desc=desc;
+		this.consumerid=consumerid;
 	}
+	
+	public int getConsumerid() {
+		return consumerid;
+	}
+	public void setConsumerid(int consumerid) {
+		this.consumerid = consumerid;
+	}
+	
 	public Complaint() {
 		
 	}

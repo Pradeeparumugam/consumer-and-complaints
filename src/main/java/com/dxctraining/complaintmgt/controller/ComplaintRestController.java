@@ -1,5 +1,9 @@
 package com.dxctraining.complaintmgt.controller;
 
+import java.util.ArrayList;
+
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,43 +13,72 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 
 import com.dxctraining.complaintmgt.dto.ComplaintDto;
+import com.dxctraining.complaintmgt.dto.ConsumerDto;
 import com.dxctraining.complaintmgt.dto.CreateComplaintRequest;
 import com.dxctraining.complaintmgt.entities.Complaint;
 import com.dxctraining.complaintmgt.service.ComplaintService;
-
+import com.dxctraining.complaintmgt.util.ComplaintUtil;
 
 @RestController
-@RequestMapping("/complaint")
+@RequestMapping("/complaints")
 public class ComplaintRestController {
 	@Autowired
 	private ComplaintService service;
-	
-	
+
+	@Autowired
+	private ComplaintUtil util;
+
+	@Autowired
+	private RestTemplate restTemplate;
+
 	@PostMapping("/addcomplaint")
 	@ResponseStatus(HttpStatus.OK)
 	public ComplaintDto create(@RequestBody CreateComplaintRequest req) {
-		int id=req.getId();
-		String desc=req.getDesc();
-		Complaint complaint=new Complaint(id,desc);
-		complaint=service.addComplaint(complaint);
-		ComplaintDto dto=complaintdto(complaint);
+		String desc = req.getDesc();
+		int consumerid = req.getConsumerid();
+		Complaint complaint = new Complaint( desc, consumerid);
+		complaint = service.addComplaint(complaint);
+		ConsumerDto consumerDto = fetchConsumerById(consumerid);
+		ComplaintDto dto = util.complaintDto(complaint,consumerid,consumerDto.getName());
 		return dto;
-		
+
 	}
+
 	@GetMapping("/findbyid/{id}")
-	public ComplaintDto find(@PathVariable("id") int id ){
-		Complaint c=service.findById(id);
-		ComplaintDto dto=complaintdto(c);
+	public ComplaintDto find(@PathVariable("id") int id) {
+		Complaint c = service.findById(id);
+		int consumerid = c.getConsumerid();
+		ConsumerDto consumerDto = fetchConsumerById(consumerid);
+		ComplaintDto dto = util.complaintDto(c,consumerid,consumerDto.getName());
 		return dto;
-		
+
 	}
+
+	@GetMapping("/consumer/{consumerid}")
+	public List<ComplaintDto> fetchComplaints(@PathVariable("consumerid") int consumerid) {
+		List<Complaint> list = service.findAll(consumerid);
+		List<ComplaintDto> response = new ArrayList<>();
+		ConsumerDto consumerDto = fetchConsumerById(consumerid);
+		for (Complaint complaint : list) {
+			ComplaintDto dto = util.complaintDto(complaint, consumerid, consumerDto.getName());
+			response.add(dto);
+		}
+		return response;
+	}
+
 	public ComplaintDto complaintdto(Complaint c) {
-		ComplaintDto cdto=new ComplaintDto();
+		ComplaintDto cdto = new ComplaintDto();
 		cdto.setId(c.getId());
 		cdto.setDesc(c.getDesc());
 		return cdto;
+	}
+	public ConsumerDto fetchConsumerById(int consumerid) {
+		String url = "http://localhost:8585/consumer/get/" + consumerid;
+		ConsumerDto dto = restTemplate.getForObject(url, ConsumerDto.class);
+		return dto;
 	}
 
 }
