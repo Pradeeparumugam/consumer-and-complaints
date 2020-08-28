@@ -1,8 +1,14 @@
 package com.dxctraining.complaintmgt.dto;
 
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
+
 public class CreateComplaintRequest {
-	
+	@NotBlank
 	private String desc;
+	@NotNull
 	private int consumerid;
 	
 	public int getConsumerid() {
